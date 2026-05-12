@@ -1,0 +1,182 @@
+================================================================================
+                CSIRO TIDE PREDICTION TOOL - QUICK START
+================================================================================
+
+FIRST-TIME SETUP
+--------------------------------------------------------------------------------
+
+1. Ensure these files are together in one folder:
+   - TidePredictionTool.exe (or run TidePredictionApp.py)
+   - CSIRO_tidal_const_v12.nc (download separately if not included)
+   - input/ (optional but recommended)
+   - prediction_outputs/ (created automatically if missing)
+
+2. Launch the app:
+   - EXE: double-click TidePredictionTool.exe
+   - Python: python TidePredictionApp.py
+
+If CSIRO_tidal_const_v12.nc is missing, download it from:
+https://data.csiro.au/collection/csiro:45584
+
+Important:
+- The .nc file is required at runtime.
+- For EXE use, keep CSIRO_tidal_const_v12.nc in the SAME directory as TidePredictionTool.exe.
+
+Note for GitHub releases:
+- The release package may not include the .nc file.
+- Users must download it from CSIRO and place it beside the exe.
+
+
+APP TABS
+--------------------------------------------------------------------------------
+
+1) Single Location
+2) Survey Location
+3) Batch Processing
+
+
+================================================================================
+TAB 1: SINGLE LOCATION
+================================================================================
+
+Use this for one coordinate over a time range.
+
+Steps:
+1. Enter Longitude/Latitude, or click "Pick on Map".
+2. Enter Start Date and End Date (YYYY-MM-DD).
+3. Choose Frequency and Timezone.
+4. Click "Run Analysis".
+5. Save outputs if needed.
+
+Outputs:
+- CSV: prediction_outputs/<site>.csv
+- Optional PNG/JSON from save buttons
+
+
+================================================================================
+TAB 2: SURVEY LOCATION
+================================================================================
+
+Use this for area-averaged tides over a polygon.
+
+Polygon options:
+1. Import polygon file: KML or SHP
+2. Draw polygon on map: click vertices, drag to pan, wheel to zoom
+
+Computation:
+- Tool finds model mesh faces inside the polygon
+- Runs tide prediction for all selected faces
+- Averages tide values for each predicted date/time interval
+
+Steps:
+1. Set Survey Name, Start Date, End Date, Frequency, Timezone.
+2. Import polygon (KML/SHP) OR click "Draw Polygon on Map".
+3. Confirm face count appears.
+4. Click "Run Survey Analysis".
+5. Click "Save Survey CSV".
+
+Output:
+- prediction_outputs/<survey_name>_survey_average.csv
+
+
+CRS NOTES (IMPORTANT)
+--------------------------------------------------------------------------------
+
+Survey geometry is expected in EPSG:4326 (lon/lat).
+
+For SHP files:
+- If .prj exists and CRS is not EPSG:4326, it is transformed automatically.
+- If .prj is missing, coordinates must already look like lon/lat.
+- If not lon/lat and no .prj is present, import is rejected with an error.
+
+
+================================================================================
+TAB 3: BATCH PROCESSING
+================================================================================
+
+Two modes:
+- Time Period Predictions
+- Single Time Point Predictions
+
+Note:
+- When switching batch mode, the form is automatically cleared to avoid stale data.
+
+
+TIME PERIOD MODE
+--------------------------------------------------------------------------------
+
+CSV columns required:
+Site,Longitude,Latitude,start,stop,interval
+
+Example:
+Site,Longitude,Latitude,start,stop,interval
+Beach1,145.77,-16.92,2024-01-01,2024-01-31,1H
+Beach2,149.53,-22.10,2024-01-01,2024-01-31,1H
+
+Output:
+- One CSV per site in prediction_outputs/
+
+
+SINGLE TIME MODE
+--------------------------------------------------------------------------------
+
+CSV columns required:
+Site,Latitude,Longitude,Date_Time
+
+Example:
+Site,Latitude,Longitude,Date_Time
+Beach1,-16.92,145.77,21/12/2025 15:30:00
+Beach2,-22.10,149.53,2025-12-21
+
+Output:
+- prediction_outputs/tide_predictions_single_time.csv
+
+
+================================================================================
+DATE/TIME FORMATS
+================================================================================
+
+Accepted formats:
+- DD/MM/YYYY HH:MM:SS
+- DD/MM/YYYY HH:MM
+- DD/MM/YYYY
+- YYYY-MM-DD HH:MM:SS
+- YYYY-MM-DD HH:MM
+- YYYY-MM-DD
+
+
+================================================================================
+TIMEZONES
+================================================================================
+
+Available:
+- Australia/Brisbane
+- Australia/Sydney
+- Australia/Melbourne
+- Australia/Hobart
+- Australia/Adelaide
+- Australia/Perth
+- Australia/Darwin
+
+
+================================================================================
+QUICK TROUBLESHOOTING
+================================================================================
+
+Error: NetCDF file not found
+- Keep CSIRO_tidal_const_v12.nc in the same folder as the app/exe.
+- Download if needed from: https://data.csiro.au/collection/csiro:45584
+
+Error importing SHP polygon
+- Install pyshp and pyproj (Python mode), or rebuild exe including these.
+- Ensure .prj exists for projected datasets.
+
+Survey shows 0 faces
+- Polygon may be outside model area.
+- CRS may be wrong; ensure EPSG:4326 result.
+
+Batch run fails after switching mode
+- Reload CSV after mode switch (form is intentionally reset).
+
+
+================================================================================

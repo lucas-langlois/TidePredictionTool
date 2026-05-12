@@ -1,0 +1,9 @@
+# Local tidal model data file should not be committed.
+CSIRO_tidal_const_v12.nc
+
+# Optional local artifacts
+artifacts/
+build/
+dist/
+__pycache__/
+*.spec
