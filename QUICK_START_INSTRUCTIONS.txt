@@ -2,6 +2,15 @@
                 CSIRO TIDE PREDICTION TOOL - QUICK START
 ================================================================================
 
+IMPORTANT
+--------------------------------------------------------------------------------
+
+For the EXE to work, `CSIRO_tidal_const_v12.nc` must be in the SAME folder as
+`TidePredictionTool.exe`.
+
+Download here if missing:
+https://data.csiro.au/collection/csiro:45584
+
 FIRST-TIME SETUP
 --------------------------------------------------------------------------------
 

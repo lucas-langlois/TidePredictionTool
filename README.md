@@ -2,6 +2,17 @@
 
 Desktop application for tidal prediction using CSIRO tidal constants and UTide harmonic reconstruction.
 
+## Important Runtime Requirement
+
+This tool will not run predictions unless the CSIRO model file is present:
+
+- Required file: `CSIRO_tidal_const_v12.nc`
+- Download: https://data.csiro.au/collection/csiro:45584
+- Location for Python run: same folder as `TidePredictionApp.py`
+- Location for EXE run: same folder as `TidePredictionTool.exe`
+
+Note: The `.nc` file is intentionally not stored in this repository.
+
 ## What This Tool Does
 
 The app predicts tide height time series from the CSIRO model file `CSIRO_tidal_const_v12.nc`.
@@ -186,6 +197,14 @@ Runtime requirement for EXE:
 
 - Keep `CSIRO_tidal_const_v12.nc` in the same directory as `TidePredictionTool.exe`.
 - The exe will not run predictions without that file.
+
+## GitHub Release Usage
+
+If you download `TidePredictionTool.exe` from Releases:
+
+1. Download `CSIRO_tidal_const_v12.nc` from https://data.csiro.au/collection/csiro:45584
+2. Put `CSIRO_tidal_const_v12.nc` in the same folder as `TidePredictionTool.exe`
+3. Run `TidePredictionTool.exe`
 
 Build outputs are organized under:
 
