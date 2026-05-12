@@ -59,10 +59,14 @@ After download, place the file in the same folder as `TidePredictionApp.py` (or 
 
 This repository intentionally excludes the `.nc` file from Git history.
 
-For release distribution:
+For source control:
 
-- You may also exclude the `.nc` file from the release zip.
-- End users must download it from the same CSIRO link and place it beside the exe.
+- The `.nc` file is excluded from Git tracking.
+
+For release distribution created by `build_exe.py`:
+
+- The generated distribution folder/zip includes `CSIRO_tidal_const_v12.nc`.
+- The script also syncs the latest built exe into the distribution package automatically.
 
 ### Python Packages
 
@@ -197,6 +201,11 @@ Runtime requirement for EXE:
 
 - Keep `CSIRO_tidal_const_v12.nc` in the same directory as `TidePredictionTool.exe`.
 - The exe will not run predictions without that file.
+
+`build_exe.py` prepares this automatically in:
+
+- `artifacts/releases/TidePredictionTool_Distribution/`
+- `artifacts/releases/TidePredictionTool_Distribution.zip`
 
 ## GitHub Release Usage
 

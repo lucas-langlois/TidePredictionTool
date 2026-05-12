@@ -12,6 +12,7 @@ import argparse
 import os
 import shutil
 from pathlib import Path
+from zipfile import ZIP_DEFLATED, ZipFile
 
 import PyInstaller.__main__
 
@@ -51,6 +52,57 @@ def clean_old_artifacts(script_dir: Path, exe_name: str) -> None:
         legacy_spec_file.unlink()
 
     print("Clean complete!\n")
+
+
+def _zip_directory(src_dir: Path, zip_path: Path) -> None:
+    if zip_path.exists():
+        zip_path.unlink()
+
+    with ZipFile(zip_path, mode="w", compression=ZIP_DEFLATED) as zf:
+        for path in sorted(src_dir.rglob("*")):
+            if path.is_file():
+                zf.write(path, arcname=str(path.relative_to(src_dir)))
+
+
+def create_release_distribution(
+    script_dir: Path,
+    artifacts_dir: Path,
+    exe_path: Path,
+    model_path: Path,
+) -> tuple[Path, Path]:
+    releases_dir = artifacts_dir / "releases"
+    dist_folder = releases_dir / "TidePredictionTool_Distribution"
+    zip_path = releases_dir / "TidePredictionTool_Distribution.zip"
+
+    dist_folder.mkdir(parents=True, exist_ok=True)
+
+    # Always sync latest executable from canonical build output.
+    shutil.copy2(exe_path, dist_folder / "TidePredictionTool.exe")
+
+    # Include required runtime model file in distribution package.
+    shutil.copy2(model_path, dist_folder / model_path.name)
+
+    # Include docs.
+    for doc_name in ["README.md", "QUICK_START_INSTRUCTIONS.txt"]:
+        doc_path = script_dir / doc_name
+        if doc_path.exists():
+            shutil.copy2(doc_path, dist_folder / doc_name)
+
+    # Include input/output folders.
+    input_src = script_dir / "input"
+    input_dst = dist_folder / "input"
+    if input_src.exists():
+        if input_dst.exists():
+            shutil.rmtree(input_dst, ignore_errors=True)
+        shutil.copytree(input_src, input_dst)
+    else:
+        input_dst.mkdir(parents=True, exist_ok=True)
+
+    output_dst = dist_folder / "prediction_outputs"
+    output_dst.mkdir(parents=True, exist_ok=True)
+
+    _zip_directory(dist_folder, zip_path)
+    return dist_folder, zip_path
 
 
 def main() -> None:
@@ -128,16 +180,22 @@ def main() -> None:
 
     out_file_onefile = dist_dir / f"{args.name}.exe"
     out_file_onedir = dist_dir / args.name / f"{args.name}.exe"
+    exe_path = out_file_onefile if out_file_onefile.exists() else out_file_onedir
+
+    release_folder, release_zip = create_release_distribution(
+        script_dir=script_dir,
+        artifacts_dir=artifacts_dir,
+        exe_path=exe_path,
+        model_path=model_path,
+    )
     print("\n" + "=" * 60)
     print("Build complete")
     print("=" * 60)
-    if out_file_onefile.exists():
-        print(f"\nExecutable target: {out_file_onefile}")
-    else:
-        print(f"\nExecutable target: {out_file_onedir}")
+    print(f"\nExecutable target: {exe_path}")
     print(f"Build artifacts directory: {artifacts_dir}")
-    print("Make sure CSIRO_tidal_const_v12.nc stays beside the executable.")
-    print("The input and prediction_outputs folders are created automatically at runtime.")
+    print(f"Release folder: {release_folder}")
+    print(f"Release zip: {release_zip}")
+    print("Distribution zip includes CSIRO_tidal_const_v12.nc and is ready for GitHub Releases.")
 
 
 if __name__ == "__main__":
